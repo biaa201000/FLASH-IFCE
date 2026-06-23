@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="pt-BR" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FlashIFCE — Estude com Inteligência</title>
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════════
+       TOAST NOTIFICATIONS
+  ═══════════════════════════════════════════ -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- ═══════════════════════════════════════════
+       TELA DE LOGIN
+  ═══════════════════════════════════════════ -->
+  <div id="auth-screen" class="auth-screen">
+    <div class="auth-bg">
+      <div class="auth-bg__blob auth-bg__blob--1"></div>
+      <div class="auth-bg__blob auth-bg__blob--2"></div>
+      <div class="auth-bg__blob auth-bg__blob--3"></div>
+      <div class="auth-bg__grid"></div>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="auth-logo__icon">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="2" y="8" width="28" height="20" rx="4" fill="currentColor" opacity="0.15"/>
+            <rect x="8" y="12" width="28" height="20" rx="4" fill="currentColor" opacity="0.3"/>
+            <rect x="4" y="10" width="28" height="20" rx="4" fill="currentColor"/>
+            <path d="M12 18h12M12 22h8" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="auth-logo__text">
+          <span class="auth-logo__brand">Flash<strong>IFCE</strong></span>
+          <span class="auth-logo__tagline">Estude com inteligência</span>
+        </div>
+      </div>
+
+      <div class="auth-tabs">
+        <button class="auth-tab auth-tab--active" data-tab="login" onclick="switchTab('login')">Entrar</button>
+        <button class="auth-tab" data-tab="register" onclick="switchTab('register')">Criar conta</button>
+        <div class="auth-tabs__indicator" id="tab-indicator"></div>
+      </div>
+
+      <!-- PAINEL LOGIN -->
+      <div class="auth-panel" id="panel-login">
+        <div class="form-group">
+          <label class="form-label" for="login-user">Usuário</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input class="form-input" type="text" id="login-user" placeholder="Seu nome de usuário" autocomplete="username" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-pass">Senha</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><rect x="4" y="9" width="12" height="9" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 9V7a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input class="form-input" type="password" id="login-pass" placeholder="Sua senha" autocomplete="current-password" />
+            <button class="input-eye" type="button" onclick="togglePass('login-pass', this)" title="Mostrar/ocultar senha">
+              <svg class="eye-open" viewBox="0 0 20 20" fill="none"><path d="M2 10s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5z" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="10" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+              <svg class="eye-closed hidden" viewBox="0 0 20 20" fill="none"><path d="M3 3l14 14M7.5 7.5A4 4 0 0114 14M2 10s1.5-2.5 4-4M14 6c1.5 1 3 2.5 4 4-1 2.5-4 5-8 5a9 9 0 01-2-.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="login-error" class="form-message form-message--error hidden"></div>
+        <button class="btn btn--primary btn--full" onclick="handleLogin()">
+          <span>Entrar</span>
+          <svg viewBox="0 0 20 20" fill="none"><path d="M4 10h12M10 4l6 6-6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <button class="btn-link" onclick="switchTab('forgot')">Esqueci minha senha</button>
+      </div>
+
+      <!-- PAINEL CADASTRO -->
+      <div class="auth-panel hidden" id="panel-register">
+        <div class="form-group">
+          <label class="form-label" for="reg-name">Nome completo</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input class="form-input" type="text" id="reg-name" placeholder="Seu nome" autocomplete="name" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-user">Usuário</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h10M3 15h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input class="form-input" type="text" id="reg-user" placeholder="Escolha um usuário" autocomplete="username" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="reg-pass">Senha</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><rect x="4" y="9" width="12" height="9" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 9V7a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input class="form-input" type="password" id="reg-pass" placeholder="Crie uma senha (mín. 4 caracteres)" autocomplete="new-password"/>
+            <button class="input-eye" type="button" onclick="togglePass('reg-pass', this)">
+              <svg class="eye-open" viewBox="0 0 20 20" fill="none"><path d="M2 10s3-5 8-5 8 5 8 5-3 5-8 5-8-5-8-5z" stroke="currentColor" stroke-width="1.5"/><circle cx="10" cy="10" r="2" stroke="currentColor" stroke-width="1.5"/></svg>
+              <svg class="eye-closed hidden" viewBox="0 0 20 20" fill="none"><path d="M3 3l14 14M7.5 7.5A4 4 0 0114 14M2 10s1.5-2.5 4-4M14 6c1.5 1 3 2.5 4 4-1 2.5-4 5-8 5a9 9 0 01-2-.2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </button>
+          </div>
+        </div>
+        <div id="reg-error" class="form-message form-message--error hidden"></div>
+        <button class="btn btn--primary btn--full" onclick="handleRegister()">
+          <span>Criar conta</span>
+          <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <!-- PAINEL ESQUECI SENHA -->
+      <div class="auth-panel hidden" id="panel-forgot">
+        <p class="forgot-hint">Digite seu usuário para redefinir a senha.</p>
+        <div class="form-group">
+          <label class="form-label" for="forgot-user">Usuário</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="7" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M3 17c0-3.314 3.134-6 7-6s7 2.686 7 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input class="form-input" type="text" id="forgot-user" placeholder="Seu usuário" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="forgot-new-pass">Nova senha</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><rect x="4" y="9" width="12" height="9" rx="2" stroke="currentColor" stroke-width="1.5"/><path d="M7 9V7a3 3 0 016 0v2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input class="form-input" type="password" id="forgot-new-pass" placeholder="Nova senha" />
+          </div>
+        </div>
+        <div id="forgot-error" class="form-message form-message--error hidden"></div>
+        <button class="btn btn--primary btn--full" onclick="handleForgot()">
+          <span>Redefinir senha</span>
+        </button>
+        <button class="btn-link" onclick="switchTab('login')">← Voltar ao login</button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       APLICATIVO PRINCIPAL
+  ═══════════════════════════════════════════ -->
+  <div id="app-screen" class="app-screen hidden">
+
+    <!-- NAVBAR -->
+    <nav class="navbar">
+      <div class="navbar__brand">
+        <div class="navbar__logo">
+          <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <rect x="4" y="10" width="28" height="20" rx="4" fill="currentColor"/>
+            <path d="M10 18h14M10 22h9" stroke="white" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <span class="navbar__name">Flash<strong>IFCE</strong></span>
+      </div>
+
+      <div class="navbar__center">
+        <span class="navbar__greeting" id="nav-greeting">Olá, Estudante 👋</span>
+      </div>
+
+      <div class="navbar__actions">
+        <button class="navbar__icon-btn" id="theme-toggle" onclick="toggleTheme()" title="Alternar tema">
+          <svg class="icon-sun" viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="3" stroke="currentColor" stroke-width="1.5"/><path d="M10 2v2M10 16v2M2 10h2M16 10h2M4.22 4.22l1.42 1.42M14.36 14.36l1.42 1.42M4.22 15.78l1.42-1.42M14.36 5.64l1.42-1.42" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <svg class="icon-moon hidden" viewBox="0 0 20 20" fill="none"><path d="M17 11A7 7 0 119 3a5 5 0 008 8z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+        <button class="btn btn--outline btn--sm" onclick="handleLogout()">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M13 3h2a2 2 0 012 2v10a2 2 0 01-2 2h-2M8 7l-3 3 3 3M5 10h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Sair
+        </button>
+      </div>
+    </nav>
+
+    <!-- DASHBOARD MAIN -->
+    <main class="dashboard">
+
+      <!-- COLUNA ESQUERDA: Matérias + Flashcards -->
+      <section class="flashcards-section">
+
+        <!-- ── VISÃO: LISTA DE MATÉRIAS ── -->
+        <div id="view-subjects">
+
+          <!-- Header com busca global e botão de matéria -->
+          <div class="section-header">
+            <div>
+              <h2 class="section-title">Minhas Matérias</h2>
+              <p class="section-subtitle" id="subjects-count-label">0 matérias</p>
+            </div>
+            <div class="section-header__actions">
+              <button class="btn btn--outline btn--sm" onclick="openAllCards()">
+                <svg viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Todos os cartões
+              </button>
+              <button class="btn btn--primary" onclick="openSubjectModal()">
+                <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Nova matéria
+              </button>
+            </div>
+          </div>
+
+          <!-- Busca global -->
+          <div class="search-bar">
+            <svg class="search-bar__icon" viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M16 16l-3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <input class="search-bar__input" type="text" id="subject-search-input" placeholder="Buscar matérias..." oninput="filterSubjects()" />
+          </div>
+
+          <!-- Grade de matérias -->
+          <div class="subjects-grid" id="subjects-grid">
+            <!-- Preenchido via JS -->
+          </div>
+
+          <!-- Estado vazio de matérias -->
+          <div class="empty-state hidden" id="subjects-empty-state">
+            <div class="empty-state__icon">
+              <svg viewBox="0 0 60 60" fill="none"><rect x="8" y="12" width="20" height="36" rx="4" stroke="currentColor" stroke-width="2"/><rect x="32" y="12" width="20" height="36" rx="4" stroke="currentColor" stroke-width="2"/><path d="M14 22h8M14 28h8M38 22h8M38 28h8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <h3>Nenhuma matéria ainda</h3>
+            <p>Crie sua primeira matéria para organizar seus estudos!</p>
+          </div>
+        </div>
+
+        <!-- ── VISÃO: FLASHCARDS DE UMA MATÉRIA ── -->
+        <div id="view-cards" class="hidden">
+
+          <!-- Breadcrumb + header -->
+          <div class="cards-view-header">
+            <button class="breadcrumb-back" onclick="goBackToSubjects()">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M12 4l-6 6 6 6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              <span>Matérias</span>
+            </button>
+            <div class="section-header">
+              <div class="cards-view-title-row">
+                <span class="subject-icon-display" id="active-subject-icon"></span>
+                <div>
+                  <h2 class="section-title" id="active-subject-name">Matéria</h2>
+                  <p class="section-subtitle" id="cards-count-label">0 cartões no baralho</p>
+                </div>
+              </div>
+              <button class="btn btn--primary" onclick="openCardModal()">
+                <svg viewBox="0 0 20 20" fill="none"><path d="M10 4v12M4 10h12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+                Novo cartão
+              </button>
+            </div>
+          </div>
+
+          <!-- Barra de busca de flashcards -->
+          <div class="search-bar">
+            <svg class="search-bar__icon" viewBox="0 0 20 20" fill="none"><circle cx="8.5" cy="8.5" r="4.5" stroke="currentColor" stroke-width="1.5"/><path d="M16 16l-3-3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <input class="search-bar__input" type="text" id="search-input" placeholder="Buscar flashcards..." oninput="filterCards()" />
+          </div>
+
+          <!-- Grade de Flashcards -->
+          <div class="cards-grid" id="cards-grid"></div>
+
+          <!-- Estado vazio de flashcards -->
+          <div class="empty-state hidden" id="empty-state">
+            <div class="empty-state__icon">
+              <svg viewBox="0 0 60 60" fill="none"><rect x="8" y="16" width="36" height="28" rx="5" stroke="currentColor" stroke-width="2"/><path d="M16 28h16M16 34h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M40 36l8 8" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </div>
+            <h3>Nenhum flashcard ainda</h3>
+            <p>Clique em "Novo cartão" para começar a estudar!</p>
+          </div>
+        </div>
+
+      </section>
+
+      <!-- COLUNA DIREITA: Timer + Stats -->
+      <aside class="sidebar">
+
+        <!-- Timer -->
+        <div class="timer-card">
+          <div class="timer-card__header">
+            <h3 class="timer-card__title">
+              <svg viewBox="0 0 20 20" fill="none"><circle cx="10" cy="10" r="7" stroke="currentColor" stroke-width="1.5"/><path d="M10 6v4l2.5 2.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              Cronômetro
+            </h3>
+          </div>
+          <div class="timer-display" id="timer-display">
+            <div class="timer-digit-group">
+              <input class="timer-digit" type="number" id="t-hours" value="00" min="0" max="99" oninput="syncTimerInput()" title="Horas"/>
+              <span class="timer-colon">:</span>
+              <input class="timer-digit" type="number" id="t-minutes" value="25" min="0" max="59" oninput="syncTimerInput()" title="Minutos"/>
+              <span class="timer-colon">:</span>
+              <input class="timer-digit" type="number" id="t-seconds" value="00" min="0" max="59" oninput="syncTimerInput()" title="Segundos"/>
+            </div>
+            <p class="timer-hint">Clique nos números para editar</p>
+          </div>
+          <div class="timer-progress-wrap">
+            <svg class="timer-ring" viewBox="0 0 100 100">
+              <circle class="timer-ring__bg" cx="50" cy="50" r="42"/>
+              <circle class="timer-ring__fill" cx="50" cy="50" r="42" id="timer-ring-fill"/>
+            </svg>
+            <div class="timer-ring-label" id="timer-ring-label">25:00</div>
+          </div>
+          <div class="timer-btns">
+            <button class="timer-btn timer-btn--play" id="btn-start" onclick="startTimer()" title="Iniciar">
+              <svg viewBox="0 0 20 20" fill="none"><polygon points="6,4 16,10 6,16" fill="currentColor"/></svg>
+            </button>
+            <button class="timer-btn timer-btn--pause" id="btn-pause" onclick="pauseTimer()" title="Pausar" disabled>
+              <svg viewBox="0 0 20 20" fill="none"><rect x="5" y="4" width="3.5" height="12" rx="1" fill="currentColor"/><rect x="11.5" y="4" width="3.5" height="12" rx="1" fill="currentColor"/></svg>
+            </button>
+            <button class="timer-btn timer-btn--reset" onclick="resetTimer()" title="Resetar">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M4 10a6 6 0 106-6H7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><path d="M5 7l2 3H4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </button>
+          </div>
+          <div class="timer-presets">
+            <button class="timer-preset" onclick="setPreset(0,5,0)">5m</button>
+            <button class="timer-preset" onclick="setPreset(0,15,0)">15m</button>
+            <button class="timer-preset timer-preset--active" onclick="setPreset(0,25,0)">25m</button>
+            <button class="timer-preset" onclick="setPreset(0,45,0)">45m</button>
+            <button class="timer-preset" onclick="setPreset(1,0,0)">1h</button>
+          </div>
+        </div>
+
+        <!-- Estatísticas -->
+        <div class="stats-card">
+          <h3 class="stats-card__title">
+            <svg viewBox="0 0 20 20" fill="none"><path d="M4 14l3-4 3 2 3-5 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M3 17h14" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Estatísticas
+          </h3>
+          <div class="stats-grid">
+            <div class="stat-item">
+              <span class="stat-value" id="stat-total">0</span>
+              <span class="stat-label">Total de cartões</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-value" id="stat-subjects">0</span>
+              <span class="stat-label">Matérias</span>
+            </div>
+            <div class="stat-item" style="grid-column: 1 / -1;">
+              <span class="stat-value" id="stat-studied">0</span>
+              <span class="stat-label">Virados hoje</span>
+            </div>
+          </div>
+        </div>
+
+      </aside>
+    </main>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       MODAL: Criar / Editar Matéria
+  ═══════════════════════════════════════════ -->
+  <div class="modal-overlay hidden" id="subject-modal" onclick="closeSubjectModalOutside(event)">
+    <div class="modal">
+      <div class="modal__header">
+        <h2 class="modal__title" id="subject-modal-title">Nova Matéria</h2>
+        <button class="modal__close" onclick="closeSubjectModal()">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="modal__body">
+        <div class="form-group">
+          <label class="form-label" for="subject-name-input">Nome da matéria</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M4 6h12M4 10h8M4 14h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input class="form-input" type="text" id="subject-name-input" placeholder="Ex: Matemática, Português, História..." />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Ícone (opcional)</label>
+          <div class="icon-picker" id="icon-picker">
+            <!-- Preenchido via JS -->
+          </div>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--ghost" onclick="closeSubjectModal()">Cancelar</button>
+        <button class="btn btn--primary" onclick="saveSubject()">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M4 10l5 5 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Salvar matéria
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       MODAL: Criar / Editar Flashcard
+  ═══════════════════════════════════════════ -->
+  <div class="modal-overlay hidden" id="card-modal" onclick="closeCardModalOutside(event)">
+    <div class="modal">
+      <div class="modal__header">
+        <h2 class="modal__title" id="modal-title">Novo Flashcard</h2>
+        <button class="modal__close" onclick="closeCardModal()">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M5 5l10 10M15 5L5 15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div class="modal__body">
+        <div class="form-group">
+          <label class="form-label" for="card-question">Pergunta / Frente</label>
+          <textarea class="form-input form-textarea" id="card-question" placeholder="Ex: Qual é a fórmula da área do círculo?" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="card-answer">Resposta / Verso</label>
+          <textarea class="form-input form-textarea" id="card-answer" placeholder="Ex: A = π × r²" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="card-category">Categoria (opcional)</label>
+          <div class="input-wrapper">
+            <span class="input-icon">
+              <svg viewBox="0 0 20 20" fill="none"><path d="M3 5h14M3 10h10M3 15h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+            </span>
+            <input class="form-input" type="text" id="card-category" placeholder="Ex: Capítulo 3, Revisão..." />
+          </div>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--ghost" onclick="closeCardModal()">Cancelar</button>
+        <button class="btn btn--primary" onclick="saveCard()">
+          <svg viewBox="0 0 20 20" fill="none"><path d="M4 10l5 5 7-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Salvar cartão
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       MODAL: Alarme
+  ═══════════════════════════════════════════ -->
+  <div class="modal-overlay hidden" id="alarm-modal">
+    <div class="modal modal--alarm">
+      <div class="alarm-icon">
+        <svg viewBox="0 0 60 60" fill="none"><circle cx="30" cy="32" r="20" stroke="currentColor" stroke-width="2.5"/><path d="M30 22v10l5 5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/><path d="M12 14l5 5M43 14l5 5" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+      </div>
+      <h2 class="alarm-title">Tempo esgotado! ⏰</h2>
+      <p class="alarm-text">Seu tempo de estudo terminou. Descanse um pouco e continue!</p>
+      <button class="btn btn--primary" onclick="closeAlarm()">Entendido</button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════
+       MODAL: Confirmar exclusão (genérico)
+  ═══════════════════════════════════════════ -->
+  <div class="modal-overlay hidden" id="delete-modal" onclick="closeDeleteOutside(event)">
+    <div class="modal modal--sm">
+      <div class="modal__header">
+        <h2 class="modal__title" id="delete-modal-title">Excluir?</h2>
+      </div>
+      <div class="modal__body">
+        <p id="delete-modal-desc" style="color: var(--text-secondary); font-size: 0.9rem;">Esta ação não pode ser desfeita.</p>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--ghost" onclick="closeDeleteModal()">Cancelar</button>
+        <button class="btn btn--danger" onclick="confirmDelete()">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html> 
